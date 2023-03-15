@@ -1,7 +1,11 @@
 
 
 from django.db import models
+#from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.contrib.auth.models import AbstractUser
+
+
+
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -19,3 +23,5 @@ class Class(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.school.name})"
+    
+

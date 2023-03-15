@@ -24,8 +24,14 @@ class SchoolSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'address']
 
 class ClassSerializer(serializers.ModelSerializer):
-    school = SchoolSerializer()
+    school_id = serializers.IntegerField()
 
     class Meta:
         model = Class
-        fields = ['id', 'name', 'school']
+        fields = ['id', 'name', 'school_id']
+
+    def create(self, validated_data):
+        school_id = validated_data.pop('school_id')
+        school = School.objects.get(id=school_id)
+        instance = Class.objects.create(school=school, **validated_data)
+        return instance
