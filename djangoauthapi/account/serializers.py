@@ -1,6 +1,7 @@
+
+
 from rest_framework import serializers
-from django.contrib.auth.models import User
-from .models import School, Class
+from .models import User, School, Class
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,23 +10,22 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        user = User.objects.create_user(
-            validated_data['username'],
-            validated_data['email'],
-            validated_data['password']
+        user = User(
+            email=validated_data['email'],
+            username=validated_data['username']
         )
+        user.set_password(validated_data['password'])
+        user.save()
         return user
 
 class SchoolSerializer(serializers.ModelSerializer):
-    classes = serializers.StringRelatedField(many=True)
-
     class Meta:
         model = School
-        fields = ['id', 'name', 'address', 'classes']
+        fields = ['id', 'name', 'address']
 
 class ClassSerializer(serializers.ModelSerializer):
-    school = serializers.StringRelatedField()
+    school = SchoolSerializer()
 
     class Meta:
         model = Class
-        fields = ['id', 'name', 'teacher', 'school']
+        fields = ['id', 'name', 'school']
